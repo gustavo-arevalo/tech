@@ -1,16 +1,22 @@
 import pymysql
+from configparser import ConfigParser
 
 class AccesoDatos():
     def __init__(self):
-        pass
-
+        parser = ConfigParser()
+        parser.read('config.ini')
+        self.host = parser.get('db', 'host')
+        self.user = parser.get('db','user')
+        self.password = parser.get('db','password')
+        self.database = parser.get('db','database')
+       
     def conectar(self):
         try:
             self.conexion=pymysql.connect(
-            host="vinculouno.com",
-            user="u222113426_goose",
-            password="wx4OoCjh1=eB",
-            database="u222113426_tech"
+            host=self.host,
+            user=self.user,
+            password=self.password,
+            database=self.database
             )
         except pymysql.Error as e:
             print("Error al conectarse a la base de datos", e)
