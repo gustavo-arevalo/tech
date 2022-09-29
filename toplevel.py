@@ -13,7 +13,7 @@ def abrir_ventana_secundaria():
         command=ventana_secundaria.destroy
     )
     boton_cerrar.place(x=75, y=75)
-# Crear la ventana principal.
+# Crear la ventana principal
 ventana_principal = tk.Tk()
 ventana_principal.config(width=400, height=300)
 ventana_principal.title("Ventana principal")
