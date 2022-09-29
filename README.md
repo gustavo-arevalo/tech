@@ -1,2 +1,2 @@
 # tech
-aprendiendo python y tkinter
+Aprendiendo python y tkinter
