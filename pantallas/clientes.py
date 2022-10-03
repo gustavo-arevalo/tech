@@ -3,6 +3,7 @@ import tkinter
 import tkinter as tk
 from tkinter import Tk, ttk
 from datos.dao import AccesoDatos
+import uuid
 
 def frm_clientes(root):
 
@@ -83,7 +84,7 @@ def frm_nuevo_cliente(root):
 
     separ1 = ttk.Separator(marco, orient=HORIZONTAL).grid(column=0,row=4, ipadx=100, pady=10, columnspan=3)
 
-    bt_aceptar = ttk.Button(marco,command=lambda: guardar_cliente({"apellido_nombre":apellido_nombre.get(), "telefono":telefono.get(), "direccion":direccion.get()}), text="Aceptar")
+    bt_aceptar = ttk.Button(marco,command=lambda: guardar_cliente({"id_cliente":uuid.uuid4(),"apellido_nombre":apellido_nombre.get(), "telefono":telefono.get(), "direccion":direccion.get()}), text="Aceptar")
     bt_aceptar.grid(row = 5, column= 2, sticky=E)
 
     bt_cancelar = ttk.Button(marco, command=frm_nuevo_cliente.destroy, text= "Cancelar")

@@ -23,6 +23,7 @@ class AccesoDatos():
             print("Error al conectarse a la base de datos", e)
 
         self.cursor=self.conexion.cursor()
+        
         #cursor.execute("select c.nombre, (select sum(todo.cantidad) from vw_clientes_ventas_detalleventaarticulo todo where c.id_cliente = todo.id_cliente and todo.id_articulo = '3ab201e0') as compra	from clientes c	order by compra desc")
 
 
@@ -39,11 +40,17 @@ class AccesoDatos():
         return rs
 
     def nuevo_cliente(self,registro):
-        print(registro)
-        consulta = "INSERT INTO CLIENTES (id_cliente, apellido_nombre, telefono, direccion) VALUES (" + str(uuid.uuid4()) +", "+ registro['apellido_nombre'] + ", " + registro['telefono'] +", "+ registro['direccion'] +")"
-        #self.conectar()
-        #self.cursor.execute(consulta)
-        #self.desconectar()
+        
+        consulta = "INSERT INTO 'clientes' ('id_cliente', 'apellido_nombre', 'telefono', 'direccion') VALUES (%s,%s,%s,%s)",
+        (str(registro['id_cliente']),registro['apellido_nombre'],registro['telefono'],registro['direccion'])
+
+        #(" + str(registro['id_cliente']) +", "+ registro['apellido_nombre'] + ", " + registro['telefono'] +", "+ registro['direccion'] +")"
+        
+        print(consulta)
+        self.conectar()
+        self.cursor.execute(consulta)
+        self.conexion.commit
+        self.desconectar()
 
 
 
