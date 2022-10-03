@@ -1,5 +1,6 @@
 import pymysql
 from configparser import ConfigParser
+import uuid
 
 class AccesoDatos():
     def __init__(self):
@@ -39,7 +40,12 @@ class AccesoDatos():
 
     def nuevo_cliente(self,registro):
         print(registro)
-        pass
+        consulta = "INSERT INTO CLIENTES (id_cliente, apellido_nombre, telefono, direccion) VALUES (" + str(uuid.uuid4()) +", "+ registro['apellido_nombre'] + ", " + registro['telefono'] +", "+ registro['direccion'] +")"
+        #self.conectar()
+        #self.cursor.execute(consulta)
+        #self.desconectar()
+
+
 
     def vw_clientes_ventas(self):
         consulta="select * vw_clientes_ventas"
