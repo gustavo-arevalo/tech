@@ -1,1 +1,1 @@
-ython main.py
+python main.py

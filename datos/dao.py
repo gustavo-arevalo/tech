@@ -40,16 +40,20 @@ class AccesoDatos():
         return rs
 
     def nuevo_cliente(self,registro):
-        
-        consulta = "INSERT INTO 'clientes' ('id_cliente', 'apellido_nombre', 'telefono', 'direccion') VALUES (%s,%s,%s,%s)",
-        (str(registro['id_cliente']),registro['apellido_nombre'],registro['telefono'],registro['direccion'])
+        apellido_nombre = registro['apellido_nombre']
+        telefono = registro['telefono']
+        id_cliente = registro['id_cliente']
+        direccion = registro['direccion']
 
+        #consulta = f"INSERT INTO clientes (id_cliente, apellido_nombre, telefono, direccion) VALUES ('{str(registro['id_cliente'])}', '{registro['apellido_nombre']}', '{registro['telefono']}','{registro['direccion']}')"
+        consulta = f"INSERT INTO clientes (id_cliente, apellido_nombre, telefono, direccion) VALUES ('{id_cliente}', '{apellido_nombre}', '{telefono}','{direccion}')"
         #(" + str(registro['id_cliente']) +", "+ registro['apellido_nombre'] + ", " + registro['telefono'] +", "+ registro['direccion'] +")"
         
         print(consulta)
         self.conectar()
         self.cursor.execute(consulta)
-        self.conexion.commit
+        print(f"{self.cursor.rowcount} details inserted")
+        self.conexion.commit()
         self.desconectar()
 
 

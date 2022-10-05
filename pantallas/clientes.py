@@ -32,8 +32,8 @@ def frm_clientes(root):
 
     dao = AccesoDatos()
 
-    for (nombre, direccion, telefono) in dao.clientes():
-        grilla.insert('', 0,text=nombre, values = (direccion,telefono))
+    for (id_cliente, nombre, direccion, telefono) in dao.clientes():
+        grilla.insert('', 0,text=id_cliente, values = (nombre, direccion,telefono))
 
     bt_nuevo_cliente = ttk.Button(frm_clientes, command = lambda: frm_nuevo_cliente(frm_clientes), text="Nuevo")
     bt_nuevo_cliente.grid(row = 2, column= 2, sticky=E)
