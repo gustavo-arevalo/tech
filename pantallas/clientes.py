@@ -44,7 +44,7 @@ def frm_clientes(root):
 def frm_nuevo_cliente(root):
      
     frm_nuevo_cliente = Toplevel()
-    frm_nuevo_cliente.geometry("+500+300")
+    #frm_nuevo_cliente.geometry("+500+300")
     
     ## Provoca que la ventana tome el focus
     frm_nuevo_cliente.focus_set()
@@ -55,39 +55,39 @@ def frm_nuevo_cliente(root):
     ## que la ventana aparece al frente del padre.
     frm_nuevo_cliente.transient(master=root)
 
-    marco= tkinter.LabelFrame(frm_nuevo_cliente, text="NUEVO CLIENTE")
-    marco.config(relief="ridge") 
-    marco.config(borderwidth=1)
-    marco.config(padx=10, pady=10)
-    marco.pack()
+    #marco= tkinter.LabelFrame(frm_nuevo_cliente, text="NUEVO CLIENTE")
+    #marco.config(relief="ridge") 
+    #marco.config(borderwidth=1)
+    #marco.config(padx=10, pady=10)
+    #marco.pack()
     
     apellido_nombre = StringVar()
     telefono = StringVar()
     direccion = StringVar()
 
     
-    lb_apellido_nombre = ttk.Label(marco, text="Apellido y nombre", padding=(5,5))
+    lb_apellido_nombre = ttk.Label(frm_nuevo_cliente, text="Apellido y nombre", padding=(5,5))
     lb_apellido_nombre.grid(row=1,column=1, sticky=E)
-    txt_apellido_nombre = Entry(marco, textvariable=apellido_nombre)
+    txt_apellido_nombre = Entry(frm_nuevo_cliente, textvariable=apellido_nombre)
     txt_apellido_nombre.grid(row=1, column= 2, sticky=W)
 
-    lb_telefono = ttk.Label(marco, text="Telefono", padding=(5,5))
+    lb_telefono = ttk.Label(frm_nuevo_cliente, text="Telefono", padding=(5,5))
     lb_telefono.grid(row=2,column=1,sticky=E)
-    txt_telefono = Entry(marco, textvariable=telefono)
+    txt_telefono = Entry(frm_nuevo_cliente, textvariable=telefono)
     txt_telefono.grid(row=2,column=2,sticky=W)
 
-    lb_direccion = ttk.Label(marco, text="Dirección", padding=(5,5))
+    lb_direccion = ttk.Label(frm_nuevo_cliente, text="Dirección", padding=(5,5))
     lb_direccion.grid(row=3,column=1,sticky=E)
-    txt_direccion = Entry(marco, textvariable=direccion)
+    txt_direccion = Entry(frm_nuevo_cliente, textvariable=direccion)
     txt_direccion.grid(row=3,column=2,sticky=W)
 
 
-    separ1 = ttk.Separator(marco, orient=HORIZONTAL).grid(column=0,row=4, ipadx=100, pady=10, columnspan=3)
+    separ1 = ttk.Separator(frm_nuevo_cliente, orient=HORIZONTAL).grid(column=0,row=4, ipadx=100, pady=10, columnspan=3)
 
-    bt_aceptar = ttk.Button(marco,command=lambda: guardar_cliente({"id_cliente":uuid.uuid4(),"apellido_nombre":apellido_nombre.get(), "telefono":telefono.get(), "direccion":direccion.get()}), text="Aceptar")
+    bt_aceptar = ttk.Button(frm_nuevo_cliente,command=lambda: guardar_cliente({"id_cliente":uuid.uuid4(),"apellido_nombre":apellido_nombre.get(), "telefono":telefono.get(), "direccion":direccion.get()}), text="Aceptar")
     bt_aceptar.grid(row = 5, column= 2, sticky=E)
 
-    bt_cancelar = ttk.Button(marco, command=frm_nuevo_cliente.destroy, text= "Cancelar")
+    bt_cancelar = ttk.Button(frm_nuevo_cliente, command=frm_nuevo_cliente.destroy, text= "Cancelar")
     bt_cancelar.grid(row=5,column=1,sticky=E)
     frm_nuevo_cliente.mainloop()
 
