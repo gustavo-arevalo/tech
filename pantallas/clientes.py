@@ -20,7 +20,7 @@ def frm_clientes(root):
     frm_clientes.transient(master=root)
 
     grilla = ttk.Treeview(frm_clientes, column = ('nombre','direccion', 'telefono'))
-    grilla.grid(row=0, column=0, columnspan=2, padx=10, pady= 20)
+    grilla.grid(row=0, column=0, columnspan=6, padx=10, pady= 20)
 
     grilla.column('#0',width=250,  anchor=tk.CENTER)
     grilla.column('#1',width=450)
@@ -35,11 +35,11 @@ def frm_clientes(root):
     for (id_cliente, nombre, direccion, telefono) in dao.clientes():
         grilla.insert('', 0,text=id_cliente, values = (nombre, direccion,telefono))
 
-    bt_nuevo_cliente = ttk.Button(frm_clientes, command = lambda: frm_nuevo_cliente(frm_clientes), text="Nuevo")
-    bt_nuevo_cliente.grid(row = 2, column= 2, sticky=E)
+    bt_nuevo_cliente = ttk.Button(frm_clientes,width=10, command = lambda: frm_nuevo_cliente(frm_clientes), text="Nuevo")
+    bt_nuevo_cliente.grid(row = 2, column= 5, padx=10, pady= 20,sticky=E)
 
-    bt_cancelar = ttk.Button(frm_clientes, command=frm_clientes.destroy, text= "Cancelar")
-    bt_cancelar.grid(row=2,column=1,sticky=E)
+    bt_cancelar = ttk.Button(frm_clientes, width=10, command=frm_clientes.destroy, text= "Cancelar")
+    bt_cancelar.grid(row=2,column=4, padx=10, pady= 20,sticky=E)
 
 def frm_nuevo_cliente(root):
      
