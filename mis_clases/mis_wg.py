@@ -1,6 +1,11 @@
 from tkinter import Tk, ttk
-from typing_extensions import Self
 
-class Mi_label(ttk.Label):
-    def __init__(self,texto):
-        self.text.set ????
+class G_label(ttk.Label):
+
+    def __init__(self,master, **kwargs): #**kwargs
+        super(G_label,self).__init__(master)
+       
+        self.config(text = kwargs['texto'] if "texto" in kwargs else "G_label" )
+        self.config(padding=(5,5))
+
+        

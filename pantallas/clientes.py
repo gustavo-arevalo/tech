@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import Tk, ttk
 from datos.dao import AccesoDatos
 import uuid
+from mis_clases.mis_wg import G_label
 
 def frm_clientes(root):
 
@@ -41,6 +42,11 @@ def frm_clientes(root):
     bt_cancelar = ttk.Button(frm_clientes, width=10, command=frm_clientes.destroy, text= "Cancelar")
     bt_cancelar.grid(row=2,column=4, padx=10, pady= 20,sticky=E)
 
+    lb_pru=G_label(frm_clientes,texto = "Botonasos")
+    lb_pru.grid(row=2,column=3)
+   
+    
+
 def frm_nuevo_cliente(root):
      
     frm_nuevo_cliente = Toplevel()
@@ -55,28 +61,23 @@ def frm_nuevo_cliente(root):
     ## que la ventana aparece al frente del padre.
     frm_nuevo_cliente.transient(master=root)
 
-    #marco= tkinter.LabelFrame(frm_nuevo_cliente, text="NUEVO CLIENTE")
-    #marco.config(relief="ridge") 
-    #marco.config(borderwidth=1)
-    #marco.config(padx=10, pady=10)
-    #marco.pack()
-    
+   
     apellido_nombre = StringVar()
     telefono = StringVar()
     direccion = StringVar()
 
     
-    lb_apellido_nombre = ttk.Label(frm_nuevo_cliente, text="Apellido y nombre", padding=(5,5))
+    lb_apellido_nombre = G_label(frm_nuevo_cliente, texto="Apellido y nombre")
     lb_apellido_nombre.grid(row=1,column=1, sticky=E)
     txt_apellido_nombre = Entry(frm_nuevo_cliente, textvariable=apellido_nombre)
     txt_apellido_nombre.grid(row=1, column= 2, sticky=W)
 
-    lb_telefono = ttk.Label(frm_nuevo_cliente, text="Telefono", padding=(5,5))
+    lb_telefono = G_label(frm_nuevo_cliente, texto="Telefono")
     lb_telefono.grid(row=2,column=1,sticky=E)
     txt_telefono = Entry(frm_nuevo_cliente, textvariable=telefono)
     txt_telefono.grid(row=2,column=2,sticky=W)
 
-    lb_direccion = ttk.Label(frm_nuevo_cliente, text="Dirección", padding=(5,5))
+    lb_direccion = G_label(frm_nuevo_cliente, texto="Dirección")
     lb_direccion.grid(row=3,column=1,sticky=E)
     txt_direccion = Entry(frm_nuevo_cliente, textvariable=direccion)
     txt_direccion.grid(row=3,column=2,sticky=W)
