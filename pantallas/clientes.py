@@ -2,9 +2,11 @@ from tkinter import *
 import tkinter
 import tkinter as tk
 from tkinter import Tk, ttk
+from tkinter.messagebox import showerror
+from turtle import title
 from datos.dao import AccesoDatos
 import uuid
-from mis_clases.mis_wg import G_label
+from mis_clases.mis_wg import G_entry, G_label
 
 def frm_clientes(root):
 
@@ -44,13 +46,16 @@ def frm_clientes(root):
 
     lb_pru=G_label(frm_clientes,texto = "Botonasos")
     lb_pru.grid(row=2,column=3)
-   
+
+    txt_prueba = G_entry(frm_clientes,variable=nombre)
+    txt_prueba.grid(row=2,column=2)
     
 
 def frm_nuevo_cliente(root):
      
     frm_nuevo_cliente = Toplevel()
     #frm_nuevo_cliente.geometry("+500+300")
+    frm_nuevo_cliente.title("Nuevo Cliente")
     
     ## Provoca que la ventana tome el focus
     frm_nuevo_cliente.focus_set()
@@ -66,36 +71,42 @@ def frm_nuevo_cliente(root):
     telefono = StringVar()
     direccion = StringVar()
 
+    marco = ttk.Frame(frm_nuevo_cliente, padding=(20,20))
+    marco.grid(row=1,column=2)
+
     
-    lb_apellido_nombre = G_label(frm_nuevo_cliente, texto="Apellido y nombre")
+    lb_apellido_nombre = G_label(marco, texto="Apellido y nombre")
     lb_apellido_nombre.grid(row=1,column=1, sticky=E)
-    txt_apellido_nombre = Entry(frm_nuevo_cliente, textvariable=apellido_nombre)
+    txt_apellido_nombre = G_entry(marco, variable=apellido_nombre)
     txt_apellido_nombre.grid(row=1, column= 2, sticky=W)
 
-    lb_telefono = G_label(frm_nuevo_cliente, texto="Telefono")
+    lb_telefono = G_label(marco, texto="Telefono")
     lb_telefono.grid(row=2,column=1,sticky=E)
-    txt_telefono = Entry(frm_nuevo_cliente, textvariable=telefono)
+    txt_telefono = G_entry(marco, variable=telefono)
     txt_telefono.grid(row=2,column=2,sticky=W)
 
-    lb_direccion = G_label(frm_nuevo_cliente, texto="Dirección")
+    lb_direccion = G_label(marco, texto="Dirección")
     lb_direccion.grid(row=3,column=1,sticky=E)
-    txt_direccion = Entry(frm_nuevo_cliente, textvariable=direccion)
+    txt_direccion = G_entry(marco, variable=direccion)
     txt_direccion.grid(row=3,column=2,sticky=W)
 
 
-    separ1 = ttk.Separator(frm_nuevo_cliente, orient=HORIZONTAL).grid(column=0,row=4, ipadx=100, pady=10, columnspan=3)
+    #separ1 = ttk.Separator(frm_nuevo_cliente, orient=HORIZONTAL).grid(column=0,row=4, ipadx=100, pady=10, columnspan=3)
 
-    bt_aceptar = ttk.Button(frm_nuevo_cliente,command=lambda: guardar_cliente({"id_cliente":uuid.uuid4(),"apellido_nombre":apellido_nombre.get(), "telefono":telefono.get(), "direccion":direccion.get()}), text="Aceptar")
-    bt_aceptar.grid(row = 5, column= 2, sticky=E)
+    bt_aceptar = ttk.Button(marco,command=lambda: guardar_cliente({"id_cliente":uuid.uuid4(),"apellido_nombre":apellido_nombre.get(), "telefono":telefono.get(), "direccion":direccion.get()}), text="Aceptar")
+    bt_aceptar.grid(row = 5, column = 2, sticky=E)
 
-    bt_cancelar = ttk.Button(frm_nuevo_cliente, command=frm_nuevo_cliente.destroy, text= "Cancelar")
-    bt_cancelar.grid(row=5,column=1,sticky=E)
+    bt_cancelar = ttk.Button(marco, command=frm_nuevo_cliente.destroy, text= "Cancelar")
+    bt_cancelar.grid(row = 5,column = 2, pady=20, sticky=W)
     frm_nuevo_cliente.mainloop()
 
 
 def guardar_cliente(registro):
-    datos = AccesoDatos()
-    datos.nuevo_cliente(registro)
+    if not registro['apellido_nombre']:
+        showerror("Ojo","No se ingreso el nombre")
+
+    #datos = AccesoDatos()
+    #datos.nuevo_cliente(registro)
     
 def frm_modifica_cliemte():
     pass
