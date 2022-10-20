@@ -4,6 +4,7 @@ c=canvas.Canvas("archivoPdf.pdf")
 c.setPageSize((80*mm, 200*mm))
 c.setLineWidth(.3)
 c.setFont('Helvetica',9)
+c.drawImage("octo.png", 10, 90, mask='auto') #mask='auto' respeta la transparencia
 c.drawString(10,40,"Texto PDF 1")
 c.drawString(10,30,"Texto PDF 2")
 c.drawString(10,20,"Texto PDF 3")
