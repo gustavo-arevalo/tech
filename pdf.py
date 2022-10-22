@@ -2,7 +2,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
 import PIL
 from PIL import Image
-from ..pyafipws import pyqr
+from pyafipws import pyqr
 
 
 qr=pyqr.PyQR()
