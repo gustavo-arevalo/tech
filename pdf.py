@@ -6,7 +6,7 @@ from pyafipws import pyqr
 
 
 qr=pyqr.PyQR()
-archivo = qr.CrearArchivo
+#archivo = qr.CrearArchivo
 
 
 ver = 1
@@ -29,19 +29,26 @@ url = qr.GenerarImagen(ver, fecha, cuit, pto_vta, tipo_cmp, nro_cmp,
 
 
 
-img = PIL.Image.open("octopeque.png")
-wid, hgt = img.size
 
 
-c=canvas.Canvas("archivoPdf.pdf")
+
+c=canvas.Canvas("ticket.pdf")
 c.setPageSize((80*mm, 200*mm))
 c.setLineWidth(.3)
 c.setFont('Helvetica',9)
 
+
+img = PIL.Image.open("octopeque.png")
+wid, hgt = img.size
+
 c.drawImage("octopeque.png", 0, 200*mm - hgt,
 preserveAspectRatio=True, mask='auto', width = 80*mm, anchor = 'c')
 
-c.drawImage("qr.png",0, 60, preserveAspectRatio=True, mask='auto', width=80*mm, anchor = 'c')
+img = PIL.Image.open("qr.png")
+wid, hgt = img.size
+
+c.drawImage("qr.png",0, -200, preserveAspectRatio=True, mask='auto', width=80*mm, anchor = 'c')
+
 
 #mask='auto' respeta la transparencia
 c.drawString(10,50,"ancho:"+str(wid)+ " alto:"+str(hgt))
