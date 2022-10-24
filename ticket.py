@@ -45,9 +45,11 @@ c.drawImage("octopeque.png", 0, 200*mm - hgt,
 preserveAspectRatio=True, mask='auto', width = 80*mm, anchor = 'c')
 
 img = PIL.Image.open("qr.png")
-wid, hgt = img.size
 
-c.drawImage("qr.png",0, -200, preserveAspectRatio=True, mask='auto', width=80*mm, anchor = 'c')
+img = img.resize((190,190))
+img.save("qr.png")
+wid, hgt = img.size
+c.drawImage("qr.png" ,0, 10, preserveAspectRatio=True, mask='auto', width=80*mm, anchor = 'c')
 
 
 #mask='auto' respeta la transparencia
