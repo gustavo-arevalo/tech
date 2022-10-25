@@ -16,9 +16,10 @@ def ticket(items,total):
     cuit = parser.get('fiscal','cuit')
     iibb = parser.get('fiscal','iibb')
     domicilio = parser.get('fiscal','domicilio')
-    inicioa_ctividades = parser.get('fiscal','inicio_actividades')
+    inicio_actividades = parser.get('fiscal','inicio_actividades')
     condicion_iva = parser.get('fiscal','condicion_iva')
     punto_venta = parser.get('fiscal','punto_venta')
+    tipo_factura = parser.get('fiscal','tipo_factura')
     fecha_hora = datetime.now()
     numero_factura = 0
 
@@ -31,26 +32,35 @@ def ticket(items,total):
     alto_qr = 190
 
     largo_ticket += alto_logo
+    print(largo_ticket)
     largo_ticket += (len(items) * alto_renglon)
     largo_encabezado = largo_ticket
     largo_ticket += alto_qr
     largo_ticket += (10 * alto_renglon) # 10 * renglones de encabezado que son 10 hasta ahora
     
     
+    print(largo_ticket)
 
     c=canvas.Canvas("ticket.pdf")
-    c.setPageSize((80*mm, largo_ticket*mm))
+    c.setPageSize((80*mm, largo_ticket))
     c.setLineWidth(.3)
     c.setFont('Helvetica',9)
 
-    c.drawImage("octopeque.png", 0, largo_ticket*mm - alto_logo,
+    c.drawImage("octopeque.png", 0, largo_ticket - alto_logo,
     preserveAspectRatio=True, mask='auto', width = 80*mm, anchor = 'c')
 
-    c.drawString(10,largo_ticket-largo_encabezado-10*alto_renglon,empresa)
-
-    #for item in items
+    c.drawString(10,largo_ticket-largo_encabezado,empresa)
+    c.drawString(10,largo_ticket-largo_encabezado-10,'CUIT '+cuit)
+    c.drawString(10,largo_ticket-largo_encabezado-20,'IIBB '+iibb)
+    c.drawString(10,largo_ticket-largo_encabezado-30,domicilio)
+    c.drawString(10,largo_ticket-largo_encabezado-40,'INICIO ACTIVIDADES '+inicio_actividades)
+    c.drawString(10,largo_ticket-largo_encabezado-50,'CONDICION IVA: '+condicion_iva)
+    c.setFont('Helvetica-Bold',9)
+    c.drawCentredString(40*mm, largo_ticket-largo_encabezado-70, tipo_factura)
+    c.setFont('Helvetica',9)
+    #for item in items "Helvetica-Bold"
     #    c.drawString(10,40,item['departamento' +' '+ item['tasa_iva'] + ' ' + item['importe'] ])
-    c.save
+    c.save()
 
 
 
