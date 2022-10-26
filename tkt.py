@@ -21,7 +21,7 @@ def ticket(items,total):
     punto_venta = parser.get('fiscal','punto_venta')
     tipo_factura = parser.get('fiscal','tipo_factura')
     fecha_hora = datetime.now()
-    numero_factura = 0
+    numero_factura = "0003-0001254"
 
     largo_ticket = 0
     alto_renglon = 10
@@ -58,8 +58,17 @@ def ticket(items,total):
     c.setFont('Helvetica-Bold',9)
     c.drawCentredString(40*mm, largo_ticket-largo_encabezado-70, tipo_factura)
     c.setFont('Helvetica',9)
-    #for item in items "Helvetica-Bold"
-    #    c.drawString(10,40,item['departamento' +' '+ item['tasa_iva'] + ' ' + item['importe'] ])
+    c.drawString(10,largo_ticket-largo_encabezado-90,'PTO VTA: '+punto_venta)
+    c.drawString(10,largo_ticket-largo_encabezado-100,'FECHA: '+fecha_hora.strftime("%d/%m/%Y %H:%M:%S"+'hs.'))
+    c.setFont('Helvetica-Bold',9)
+    c.drawString(10,largo_ticket-largo_encabezado-120,'NRO. FACTRA: '+numero_factura)
+    c.setFont('Helvetica',9)
+    c.drawString(10,largo_ticket-largo_encabezado-130,'A consumidor final ')
+
+    desp = 150
+    for item in items:
+        c.drawString(10,largo_ticket-largo_encabezado-desp,item['departamento'] +'      '+ str(item['tasa_iva']) + '     ' + str(item['importe']))
+        desp += 10
     c.save()
 
 
