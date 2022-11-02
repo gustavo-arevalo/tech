@@ -35,16 +35,6 @@ CUIT = 23057529164
 CERT = "certificado.crt"
 PRIVATEKEY = "privada.key"
 CACHE = "../cache"
-CONF_PDF = dict(
-    LOGO="plantillas/logo.png",
-    EMPRESA="Empresa de Prueba",
-    MEMBRETE1="Direccion de Prueba",
-    MEMBRETE2="Capital Federal",
-    CUIT="CUIT 23-05752916-4",
-    IIBB="23057529164",
-    IVA="IVA Responsable Inscripto",
-    INICIO="Inicio de Actividad: 01/04/2015",
-)
 
 
 def facturar(registros):
@@ -61,30 +51,6 @@ def facturar(registros):
     wsfev1.SetTicketAcceso(ta)
     wsfev1.Conectar(CACHE, URL_WSFEv1)
 
-    # inicialización PDF
-    fepdf = FEPDF()
-    fepdf.CargarFormato("factura.csv")
-    fepdf.FmtCantidad = "0.2"
-    fepdf.FmtPrecio = "0.2"
-    fepdf.CUIT = CUIT
-    for k, v in CONF_PDF.items():
-        fepdf.AgregarDato(k, v)
-
-    if "homo" in URL_WSAA:
-        fepdf.AgregarCampo(
-            "DEMO",
-            "T",
-            120,
-            260,
-            0,
-            0,
-            text="DEMOSTRACION",
-            size=70,
-            rotate=45,
-            foreground=0x808080,
-            priority=-1,
-        )
-        fepdf.AgregarDato("motivos_obs", "Ejemplo Sin validez fiscal")
 
     # recorrer los registros a facturar, solicitar CAE y generar el PDF:
     for reg in registros:
@@ -113,15 +79,11 @@ def facturar(registros):
         )
 
 
-
         ok = cbte.autorizar(wsfev1)
         nro = cbte.encabezado["cbte_nro"]
         print("Factura autorizada", nro, cbte.encabezado["cae"])
         if "homo" in URL_WSFEv1:
             cbte.encabezado["motivos_obs"] = "Ejemplo Sin validez fiscal"
-        ok = cbte.generar_pdf(fepdf, "factura_{}.pdf".format(nro)) #en factura_{}.pdf agregar antes un path para que queden las facturas organizadas
-        print("PDF generado", ok)
-
 
 class Comprobante:
     def __init__(self, **kwargs):
@@ -310,7 +272,7 @@ class Comprobante:
             fepdf.AgregarIva(**iva)
 
         # armar el PDF:
-        fepdf.CrearPlantilla(papel="A4", orientacion="portrait")
+        fepdf.CrearPlantilla(papel="", orientacion="portrait")
         fepdf.ProcesarPlantilla(num_copias=1, lineas_max=24, qty_pos="izq")
         fepdf.GenerarPDF(archivo=salida)
         return salida
@@ -322,25 +284,23 @@ if __name__ == "__main__":
     # IMPORTANTE: es recomendable indicar el nro de factura (y guardarlo antes)
     # para evitar generar varias facturas distintas para el mismo registro, y
     # poder recuperarlas (reproceso automático) si hay falla de comunicación
-
     facturas = [
-            {
-                "dni": 1,
-                "nombre": "",
-                "domicilio": "",
+        {
+            "dni": 24546703,
+            "nombre": "Juan Chota",
+            "domicilio": "Balcarce 50",
 
-                "items": [{"descripcion":"Tomate",
-                        "cantidad":2,
-                        "precio": 125.50,
-                        "tasa_iva": 21},
+            "items": [{"descripcion":"Tomate",
+                      "cantidad":2,
+                      "precio": 125.50,
+                      "tasa_iva": 21},
 
-                        {"descripcion":"Fideos",
-                        "cantidad":2,
-                        "precio": 230.50,
-                        "tasa_iva": 21}
-                        ]
-            }
+                      {"descripcion":"Fideos",
+                      "cantidad":2,
+                      "precio": 230.50,
+                      "tasa_iva": 21}
+                      ]
+        }
 
-        ] 
-
+    ]
     facturar(facturas)
