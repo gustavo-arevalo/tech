@@ -265,6 +265,8 @@ class Comprobante:
             wsfev1.AgregarIva(**iva)
 
         # llamo al websevice para obtener el CAE:
+        # PODRIA PREGUNTAR SI NO MANDO EL CAE Y YA ESTA EN LA CABECERA, ENTONCES NO LO PIDO, PORQUE
+        # PODRIA USARLO PARA REIMPRIMIR UNA FACTURA GUARDADA EN UNA BASE DE DATOS
         wsfev1.CAESolicitar()
 
         if wsfev1.ErrMsg:
