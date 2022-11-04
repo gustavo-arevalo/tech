@@ -26,33 +26,24 @@ import sys
 from decimal import Decimal
 import datetime
 import warnings
-from configparser import ConfigParser
 
 
 # Opciones de configuración (testing/homologación, cambiar para producción):
-parser = ConfigParser()
-parser.read('config.ini')
-
-if parser.get('fiscal','homo'):
-    URL_WSAA = "https://wsaahomo.afip.gov.ar/ws/services/LoginCms?wsdl"
-    URL_WSFEv1 = "https://wswhomo.afip.gov.ar/wsfev1/service.asmx?WSDL"
-else:
-    URL_WSAA = "https://wsaa.afip.gov.ar/ws/services/LoginCms"
-    URL_WSFEv1 = "https://servicios1.afip.gov.ar/wsfev1/service.asmx?WSDL"
-
-CUIT = parser.get('fiscal','cuit')
-CERT = parser.get('fiscal','cert')
-PRIVATEKEY = parser.get('fiscal','privatekey')
+URL_WSAA = "https://wsaahomo.afip.gov.ar/ws/services/LoginCms?wsdl"
+URL_WSFEv1 = "https://wswhomo.afip.gov.ar/wsfev1/service.asmx?WSDL"
+CUIT = 23057529164
+CERT = "certificado.crt"
+PRIVATEKEY = "privada.key"
 CACHE = "../cache"
 CONF_PDF = dict(
-    LOGO=parser.get('fiscal','logo'),
-    EMPRESA=parser.get('fiscal','empresa'),
-    MEMBRETE1=parser.get('fiscal','domicilio'),
-    MEMBRETE2="Buenos Aires",
-    CUIT=parser.get('fiscal','cuit'),
-    IIBB=parser.get('fiscal','iibb'),
-    IVA=parser.get('fiscal','condicion_iva'),
-    INICIO=parser.get('fiscal','inicio_actividades'),
+    LOGO="plantillas/logo.png",
+    EMPRESA="Empresa de Prueba",
+    MEMBRETE1="Direccion de Prueba",
+    MEMBRETE2="Capital Federal",
+    CUIT="CUIT 23-05752916-4",
+    IIBB="23057529164",
+    IVA="IVA Responsable Inscripto",
+    INICIO="Inicio de Actividad: 01/04/2015",
 )
 
 
@@ -334,9 +325,24 @@ if __name__ == "__main__":
     # para evitar generar varias facturas distintas para el mismo registro, y
     # poder recuperarlas (reproceso automático) si hay falla de comunicación
 
-    facturas = [ {"dni": 1, "nombre": "", "domicilio": "",
+    facturas = [
+            {
+                "dni": 1,
+                "nombre": "",
+                "domicilio": "",
 
-                "items": [{"descripcion":"Tomate", "cantidad":2, "precio": 125.50, "tasa_iva": 21},
-                          {"descripcion":"Fideos", "cantidad":2, "precio": 230.50, "tasa_iva": 21}]} ] 
+                "items": [{"descripcion":"Tomate",
+                        "cantidad":2,
+                        "precio": 125.50,
+                        "tasa_iva": 21},
+
+                        {"descripcion":"Fideos",
+                        "cantidad":2,
+                        "precio": 230.50,
+                        "tasa_iva": 21}
+                        ]
+            }
+
+        ] 
 
     facturar(facturas)
