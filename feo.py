@@ -13,7 +13,6 @@
 from pyafipws.wsaa import WSAA
 from pyafipws.wsfev1 import WSFEv1
 from pyafipws.pyfepdf import FEPDF
-from tkt import ticket
 
 "Ejemplo completo para WSFEv1 de AFIP (Factura Electrónica Mercado Interno)"
 
@@ -27,33 +26,24 @@ import sys
 from decimal import Decimal
 import datetime
 import warnings
-from configparser import ConfigParser
 
 
 # Opciones de configuración (testing/homologación, cambiar para producción):
-parser = ConfigParser()
-parser.read('config.ini')
-
-if parser.get('fiscal','homo'):
-    URL_WSAA = "https://wsaahomo.afip.gov.ar/ws/services/LoginCms?wsdl"
-    URL_WSFEv1 = "https://wswhomo.afip.gov.ar/wsfev1/service.asmx?WSDL"
-else:
-    URL_WSAA = "https://wsaa.afip.gov.ar/ws/services/LoginCms"
-    URL_WSFEv1 = "https://servicios1.afip.gov.ar/wsfev1/service.asmx?WSDL"
-
-CUIT = parser.get('fiscal','cuit')
-CERT = parser.get('fiscal','cert')
-PRIVATEKEY = parser.get('fiscal','privatekey')
+URL_WSAA = "https://wsaahomo.afip.gov.ar/ws/services/LoginCms?wsdl"
+URL_WSFEv1 = "https://wswhomo.afip.gov.ar/wsfev1/service.asmx?WSDL"
+CUIT = 23057529164
+CERT = "certificado.crt"
+PRIVATEKEY = "privada.key"
 CACHE = "../cache"
 CONF_PDF = dict(
-    LOGO=parser.get('fiscal','logo'),
-    EMPRESA=parser.get('fiscal','empresa'),
-    MEMBRETE1=parser.get('fiscal','domicilio'),
-    MEMBRETE2="Buenos Aires",
-    CUIT=parser.get('fiscal','cuit'),
-    IIBB=parser.get('fiscal','iibb'),
-    IVA=parser.get('fiscal','condicion_iva'),
-    INICIO=parser.get('fiscal','inicio_actividades'),
+    LOGO="plantillas/logo.png",
+    EMPRESA="Empresa de Prueba",
+    MEMBRETE1="Direccion de Prueba",
+    MEMBRETE2="Capital Federal",
+    CUIT="CUIT 23-05752916-4",
+    IIBB="23057529164",
+    IVA="IVA Responsable Inscripto",
+    INICIO="Inicio de Actividad: 01/04/2015",
 )
 
 
@@ -124,20 +114,20 @@ def facturar(registros):
 
 
         cbte.encabezado["imp_total"] = round(cbte.encabezado["imp_total"],2)
-        cbte.encabezado["imp_iva"] = round(cbte.encabezado["imp_iva"],2)
-        #cbte.encabezado["imp_total"] = round(cbte.encabezado["imp_total"],2)
         
+        #redondea todos los iva
+        for iva in cbte.ivas.keys():
+            print('antes iva de '+str(iva)+ ' ' + str(cbte.ivas[iva]))
+            cbte.ivas[iva]["importe"] = round(cbte.ivas[iva]["importe"],2)
+            print('despues iva de '+str(iva)+ ' ' + str(cbte.ivas[iva]))
+
         ok = cbte.autorizar(wsfev1)
         nro = cbte.encabezado["cbte_nro"]
         print("Factura autorizada", nro, cbte.encabezado["cae"])
         if "homo" in URL_WSFEv1:
             cbte.encabezado["motivos_obs"] = "Ejemplo Sin validez fiscal"
-        
-        #desactivo estas 2 lineas para probar con el ticket
-        #ok = cbte.generar_pdf(fepdf, "factura_{}.pdf".format(nro)) #en factura_{}.pdf agregar antes un path para que queden las facturas organizadas
-        #print("PDF generado", ok)
-        ticket(cbte)
-
+        ok = cbte.generar_pdf(fepdf, "factura_{}.pdf".format(nro)) #en factura_{}.pdf agregar antes un path para que queden las facturas organizadas
+        print("PDF generado", ok)
 
 
 class Comprobante:
@@ -212,7 +202,6 @@ class Comprobante:
         if tasa_iva:
             iva_id = {10.5: 4, 0: 3, 21: 5, 27: 6}[tasa_iva]
             item["iva_id"] = iva_id
-            item["tasa_iva"] = tasa_iva
             # discriminar IVA si es clase A / M
             iva_liq = subtotal * tasa_iva / 100.0
             self.agergar_iva(iva_id, subtotal, iva_liq)
@@ -233,11 +222,11 @@ class Comprobante:
                 60,
                 64,
             ):
-                item["precio"] = round(precio / (1.0 + tasa_iva / 100.0),2)
-                item["imp_iva"] = round(importe * (tasa_iva / 100.0),2)
+                item["precio"] = precio / (1.0 + tasa_iva / 100.0)
+                item["imp_iva"] = importe * (tasa_iva / 100.0)
             else:
                 # no discriminar IVA si es clase B (importe final iva incluido)
-                item["precio"] = round(precio * (1.0 + tasa_iva / 100.0),2)
+                item["precio"] = precio * (1.0 + tasa_iva / 100.0)
                 item["imp_iva"] = None
                 subtotal += iva_liq
                 iva_liq = 0
@@ -249,15 +238,13 @@ class Comprobante:
             else:
                 self.encabezado["imp_op_ex"] += subtotal  # Exento
         item["importe"] = subtotal
-        self.encabezado["imp_total"] += round(subtotal + iva_liq,2)
+        self.encabezado["imp_total"] += subtotal + iva_liq
         self.items.append(item)
 
     def agergar_iva(self, iva_id, base_imp, importe):
-        iva = self.ivas.setdefault(
-            iva_id, dict(iva_id=iva_id, base_imp=0.0, importe=0.0)
-        )
+        iva = self.ivas.setdefault(iva_id, dict(iva_id=iva_id, base_imp=0.0, importe=0.0))
         iva["base_imp"] += base_imp
-        iva["importe"] += round(importe,2) #este fue el round del AlicIva
+        iva["importe"] += importe
 
     def autorizar(self, wsfev1):
         "Prueba de autorización de un comprobante (obtención de CAE)"
@@ -343,16 +330,24 @@ if __name__ == "__main__":
     # para evitar generar varias facturas distintas para el mismo registro, y
     # poder recuperarlas (reproceso automático) si hay falla de comunicación
 
-    facturas = [ {"dni": 1, "nombre": "", "domicilio": "",
-                "items": [{"descripcion":"Tomate", "cantidad":2, "precio": 165.5, "tasa_iva": 21},
-                          {"descripcion":"Fideos", "cantidad":2, "precio": 413, "tasa_iva": 21}]} ] 
+    facturas = [
+            {
+                "dni": 1,
+                "nombre": "",
+                "domicilio": "",
 
+                "items": [{"descripcion":"Tomate",
+                        "cantidad":1,
+                        "precio": 165.30,
+                        "tasa_iva": 21},
 
-    datos_factura = {"dni": 1, 
-    "items" : [{"departamento":"almacen","cantidad":1,"precio": 125.50,"tasa_iva": 21},
-        {"departamento":"verduleria","cantidad":1,"precio": 525.50,"tasa_iva": 10.5},
-        {"departamento":"cigarrillos","cantidad":1,"precio": 325.50,"tasa_iva": 10.5}] }
+                        {"descripcion":"Fideos",
+                        "cantidad":1,
+                        "precio": 271.49,
+                        "tasa_iva": 10.5}
+                        ]
+            }
 
+        ] 
 
-    
     facturar(facturas)

@@ -6,7 +6,7 @@ from PIL import Image
 from pyafipws import pyqr
 from datetime import datetime
 
-def ticket(cbte):
+def ticket(datos_factura):
     
     parser = ConfigParser()
     parser.read('config.ini')
@@ -35,7 +35,7 @@ def ticket(cbte):
 
     largo_ticket += alto_logo
     
-    largo_ticket += (len(cbte.items) * alto_renglon)
+    largo_ticket += (len(datos_factura["items"]) * alto_renglon)
     largo_encabezado = largo_ticket #hasta aca es el largo del encabezado
     largo_ticket += alto_qr
     largo_ticket += alto_logo_afip
@@ -69,19 +69,18 @@ def ticket(cbte):
     c.drawString(10,largo_ticket-largo_encabezado-130,'A consumidor final ')
 
     desp = 150
-    print(cbte.items)
-    for item in cbte.items:
-        c.drawString(10,largo_ticket-largo_encabezado-desp,item['ds'] +'  (iva '+ str(item['tasa_iva']) + ')')        
+    for item in datos_factura["items"]:
+        c.drawString(10,largo_ticket-largo_encabezado-desp,item['departamento'] +'  (iva '+ str(item['tasa_iva']) + ')')        
         c.drawRightString(75*mm,largo_ticket-largo_encabezado-desp,'$'+str(item['precio']))
         desp += 10
 
     desp += 10
     c.setFont('Helvetica-Bold',12)
-    c.drawRightString(75*mm,largo_ticket-largo_encabezado-desp,'TOTAL $'+str(cbte.encabezado["imp_total"]))
+    c.drawRightString(75*mm,largo_ticket-largo_encabezado-desp,'TOTAL $'+str(datos_factura["total"]))
     c.setFont('Helvetica',9)
     desp += 20
-    c.drawString(10,largo_ticket-largo_encabezado-desp,'CAE '+ cbte.encabezado["cae"] )
-    c.drawRightString(75*mm,largo_ticket-largo_encabezado-desp,'Vto. CAE '+ cbte.encabezado["fch_venc_cae"] )
+    c.drawString(10,largo_ticket-largo_encabezado-desp,'CAE '+ datos_factura["cae"] )
+    c.drawRightString(75*mm,largo_ticket-largo_encabezado-desp,'Vto. CAE '+ datos_factura["vto_cae"] )
 
     qr=pyqr.PyQR()
     archivo = qr.CrearArchivo
@@ -92,7 +91,7 @@ def ticket(cbte):
     #                         tipo_cod_aut, cod_aut)
 
     #formateo fecha para el qr
-    fecha=cbte.encabezado["fecha_cbte"] #.strftime("%d/%m/%Y")
+    fecha=fecha_hora.strftime("%d/%m/%Y")
      
     url = qr.GenerarImagen(1, fecha, cuit, int(punto_venta), int(tipo_comprobante), int(numero_factura), 
                          float(total), "PES", 0, 99, 1, "E", int(cae))
@@ -129,14 +128,14 @@ items = [{"departamento":"almacen","cantidad":1,"precio": 125.50,"tasa_iva": 21}
         {"departamento":"verduleria","cantidad":1,"precio": 525.50,"tasa_iva": 10.5},
         {"departamento":"cigarrillos","cantidad":1,"precio": 325.50,"tasa_iva": 10.5}]
 """
-cbte = {"total": 12300, "cae" : "566322188663321", "vto_cae" : "30/12/2022",
+datos_factura = {"total": 12300, "cae" : "566322188663321", "vto_cae" : "30/12/2022",
     "items" : [{"departamento":"almacen","cantidad":1,"precio": 125.50,"tasa_iva": 21},
         {"departamento":"verduleria","cantidad":1,"precio": 525.50,"tasa_iva": 10.5},
         {"departamento":"cigarrillos","cantidad":1,"precio": 325.50,"tasa_iva": 10.5}] }
 
 
 
-#ticket(cbte, total, cae, vto_cae)
-#ticket(cbte)
+#ticket(datos_factura, total, cae, vto_cae)
+#ticket(datos_factura)
 
     
